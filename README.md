@@ -11,8 +11,8 @@ Antes de tudo, voce precisa ter o [Composer](https://getcomposer.org/) no direto
 
 Instalar dependencias do projeto
 
-`$composer install`
+`$composer install` ou `$composer.phar install`
 
 Servidor de produção
 
-`php -S localhost:8888 -t public public/index.php`
+`$php -S localhost:8888 -t public public/index.php`
