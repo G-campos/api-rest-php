@@ -2,17 +2,123 @@
 
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
+use Illuminate\Database\Capsule\Manager as Capsule;
 
 require 'vendor/autoload.php';
 
-$app = new \Slim\App;
+$app = new \Slim\App([
+   'settings' => [
+      'displayErrorDetails' => true
+   ]
+]);
 
-/* Conteiner dependecy injection */
+/* conexão DB */
+$container = $app->getContainer();
+$container['db'] = function(){
+   $capsule = new Capsule;
+   $capsule->addConnection([
+      'driver'     => 'mysql',
+      'host'       => 'localhost',
+      'database'   => 'slim',
+      'username'   => 'user',
+      'password'   => 'password',
+      'charset'    => 'utf8',
+      'collection' => 'utf8_unicode_ci',
+      'prefix'     => '',
+   ]);
+   $capsule->setAsGlobal();
+   $capsule->bootEloquent();
+
+   return $capsule;
+};
+
+$app->get('/usuarios', function (Request $request, Response $response) {
+
+   $db = $this->get('db');
+   // $db->schema()->dropIfExists('usuarios');
+   // $db->schema()->create('usuarios', function($table){
+   //    $table->increments('id');
+   //    $table->string('nome');
+   //    $table->string('email');
+   //    $table->timestamps();
+   // });
+   
+   /*Inserir */
+   $db->table('usuarios')->insert([
+      'nome' => 'Gabriel de Campos',
+      'email' => 'gabodecampos@gmail.com'
+   ]);
+});
+
+/* Tipos de respostas
+cabeçalho, text, Json, XML 
+
+
+$app->get('/header', function (Request $request, Response $response) {
+
+   $response->write('Esse é um retorno header');
+   return $response->withHeader('allow', 'PUT')
+      ->withAddedHeader('Content-Length', 30);
+});
+
+$app->get('/json', function (Request $request, Response $response) {
+
+   return $response->withJson([
+      "nome" => "Ze ruela",
+      "endereco" => "Endereco tal..."
+   ]);
+});
+
+$app->get('/xml', function (Request $request, Response $response) {
+
+   $xml = file_get_contents('arquivo');
+   $response->write($xml);
+
+   return $response->withHeader('Content-Type', 'application/xml');
+});
+
+/*Middleware 
+$app->add(function ($request, $response, $next) {
+   $response->write(' Inicio camada 1 + ');
+   //return $next($request, $response);
+   $response = $next($request, $response);
+   $response->write(' + Fim da camada 1 ');
+   return $response;
+});
+
+$app->add(function ($request, $response, $next) {
+   $response->write(' Inicio camada 2 + ');
+   //return $next($request, $response);
+   $response = $next($request, $response);
+   $response->write(' + Fim da camada 2 ');
+   return $response;
+});
+
+// $app->add(function ($request, $response, $next) {
+//    $response->write(' Inicio camada 2 + ');
+//    return $next($request, $response);
+// });
+
+$app->get(
+   '/usuarios',
+   function (Request $request, Response $response) {
+      $response->write('Ação principal usuarios');
+   }
+);
+
+$app->get(
+   '/postagens',
+   function (Request $request, Response $response) {
+      $response->write('Ação principal postagens');
+   }
+);
+
+/* Conteiner dependecy injection 
 class Servico{
 
 }
 
-/*Container Pimple */
+/*Container Pimple 
 $container = $app->getContainer();
 $container['servico'] = function(){
    return new Servico;
@@ -25,8 +131,13 @@ $app->get('/servico', function(Request $request, Response $response){
 
 });
 
-/* Controllers como serviço */
-$app->get('/usuario', '\MyApp\controllers\Home:index');
+/* Controllers como serviço 
+$container = $app->getContainer();
+$container['Home'] = function () {
+   return new MyApp\controllers\Home( new MyApp\View);
+};
+ 
+$app->get('/usuario', 'Home:index');
 
 /* Padrao PSR7 
 $app->get('/postagens', function(Request $request, Response $response){

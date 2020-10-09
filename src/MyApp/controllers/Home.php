@@ -2,14 +2,17 @@
 namespace MyApp\controllers;
 
 class Home{
-    protected $container;
-    public function __construct($container){
-        $this->container = $container;
+    //protected $container;
+    protected $view;
+
+    public function __construct($view){
+        $this->view = $view;
     }
 
     public function index($request, $response){
 
-        $r = $this->container->get('request');
+        //$view = $this->container->get('View');
+        var_dump($this->view);
         return $response->write('Teste index');
     }
 }
