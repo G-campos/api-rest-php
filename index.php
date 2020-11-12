@@ -1,2 +1,4 @@
-<?php 
-echo phpinfo();
+<?php
+include 'bootstrap.php';
+
+$RequestValidator = new \Validator\RequestValidator();
