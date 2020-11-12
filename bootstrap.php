@@ -10,7 +10,7 @@ define(USER, 'campos');
 define(SENHA, '@lpha2019');
 
 define(DS, DIRECTORY_SEPARATOR);
-define(DIR_APP, 'home/campos/Projetos/api-rest-php');
+define(DIR_APP, '/var/www/html/api-rest-php');
 
 if (file_exists('autoload.php')){
     include 'autoload.php';
